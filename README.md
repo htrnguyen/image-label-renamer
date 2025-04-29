@@ -2,7 +2,7 @@
 
 Ứng dụng web giúp đổi tên file ảnh và file nhãn JSON theo định dạng tùy chỉnh một cách nhanh chóng và hiệu quả.
 
-![Đổi tên file tự động](/placeholder.svg?height=300&width=600&query=screenshot%20of%20file%20renaming%20application)
+![Đổi tên file tự động](./public/Demo_2.png)
 
 ## Tính năng chính
 
@@ -40,13 +40,13 @@
 
 ### Phương pháp 1: Sử dụng trực tiếp từ GitHub Pages
 
-Truy cập ứng dụng tại: [https://yourusername.github.io/image-label-renamer](https://yourusername.github.io/image-label-renamer)
+Truy cập ứng dụng tại: [https://htrnguyen.github.io/image-label-renamer](https://htrnguyen.github.io/image-label-renamer)
 
 ### Phương pháp 2: Chạy trên máy tính cá nhân
 
 1. Clone repository:
 \`\`\`bash
-git clone https://github.com/yourusername/image-label-renamer.git
+git clone https://github.com/htrnguyen/image-label-renamer.git
 \`\`\`
 
 2. Di chuyển vào thư mục dự án:
@@ -73,7 +73,7 @@ npm run dev
 
 ## Bản quyền
 
-© 2023 Hà Trọng Nguyễn. Tất cả các quyền được bảo lưu.
+© 2025 Hà Trọng Nguyễn. Tất cả các quyền được bảo lưu.
 
 ## Giấy phép
 
