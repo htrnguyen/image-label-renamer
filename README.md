@@ -1,30 +1,76 @@
-# Automated file renaming
+# Ứng dụng đổi tên file tự động
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+Ứng dụng web giúp đổi tên file ảnh và file nhãn JSON theo định dạng tùy chỉnh một cách nhanh chóng và hiệu quả.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/trong-nguyens-projects-9c7c6e80/v0-automated-file-renaming)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/zSzJZBIVaCB)
+![Ứng dụng đổi tên file tự động](/placeholder.svg?height=300&width=600&query=screenshot%20of%20file%20renaming%20application)
 
-## Overview
+## Tính năng chính
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+- Đổi tên file ảnh (.jpg) và file nhãn (.json) theo định dạng `tên-sản-phẩm_mặt_số-thứ-tự`
+- Tự động cập nhật đường dẫn ảnh trong file JSON
+- Xem trước ảnh và tên file mới trước khi đổi tên
+- Hỗ trợ phím tắt để tăng tốc quy trình làm việc
+- Tự động trích xuất số thứ tự từ tên file gốc
+- Tải xuống tất cả file đã đổi tên dưới dạng file ZIP
+- Lưu lịch sử đổi tên để theo dõi và tham khảo
 
-## Deployment
+## Cách sử dụng
 
-Your project is live at:
+1. Chọn thư mục chứa hai thư mục con 'images' và 'labels'
+2. Nhập tên sản phẩm, chọn mặt (F/B) và số thứ tự
+3. Nhấn "Đổi tên file" để đổi tên file hiện tại
+4. Tải xuống các file đã đổi tên hoặc tiếp tục đổi tên các file khác
+5. Sau khi hoàn thành, nhấn "Tải xuống tất cả" để tải về một file ZIP chứa tất cả file đã đổi tên
 
-**[https://vercel.com/trong-nguyens-projects-9c7c6e80/v0-automated-file-renaming](https://vercel.com/trong-nguyens-projects-9c7c6e80/v0-automated-file-renaming)**
+## Phím tắt
 
-## Build your app
+- `Ctrl + →` - Di chuyển đến file tiếp theo
+- `Ctrl + ←` - Di chuyển đến file trước đó
+- `Ctrl + S` - Đổi tên file hiện tại
+- `Ctrl + F` - Chọn mặt trước (F)
+- `Ctrl + B` - Chọn mặt sau (B)
+- `Ctrl + Enter` - Đổi tên file hiện tại
 
-Continue building your app on:
+## Yêu cầu kỹ thuật
 
-**[https://v0.dev/chat/projects/zSzJZBIVaCB](https://v0.dev/chat/projects/zSzJZBIVaCB)**
+- Trình duyệt web hiện đại (Chrome, Firefox, Edge, Safari)
+- Kết nối internet để tải các thư viện cần thiết
 
-## How It Works
+## Cài đặt và chạy
 
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+### Phương pháp 1: Sử dụng trực tiếp từ GitHub Pages
+
+Truy cập ứng dụng tại: [https://yourusername.github.io/image-label-renamer](https://yourusername.github.io/image-label-renamer)
+
+### Phương pháp 2: Chạy trên máy tính cá nhân
+
+1. Clone repository:
+\`\`\`bash
+git clone https://github.com/yourusername/image-label-renamer.git
+\`\`\`
+
+2. Di chuyển vào thư mục dự án:
+\`\`\`bash
+cd image-label-renamer
+\`\`\`
+
+3. Cài đặt các gói phụ thuộc:
+\`\`\`bash
+npm install
+\`\`\`
+
+4. Chạy ứng dụng:
+\`\`\`bash
+npm run dev
+\`\`\`
+
+5. Mở trình duyệt và truy cập: `http://localhost:3000`
+
+## Lưu ý
+
+- Do giới hạn bảo mật của trình duyệt, các file đã đổi tên cần được tải xuống thủ công
+- Ứng dụng chỉ xử lý các file ảnh .jpg và file nhãn .json
+
+## Giấy phép
+
+MIT License
