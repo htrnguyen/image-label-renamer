@@ -7,8 +7,11 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Ứng dụng đổi tên file tự động",
+  title: "Đổi tên file tự động",
   description: "Ứng dụng đổi tên file ảnh và file nhãn theo định dạng tùy chỉnh",
+  authors: [{ name: "Hà Trọng Nguyễn" }],
+  creator: "Hà Trọng Nguyễn",
+  publisher: "Hà Trọng Nguyễn",
     generator: 'v0.dev'
 }
 

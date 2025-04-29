@@ -1,8 +1,8 @@
-# Ứng dụng đổi tên file tự động
+# Đổi tên file tự động
 
 Ứng dụng web giúp đổi tên file ảnh và file nhãn JSON theo định dạng tùy chỉnh một cách nhanh chóng và hiệu quả.
 
-![Ứng dụng đổi tên file tự động](/placeholder.svg?height=300&width=600&query=screenshot%20of%20file%20renaming%20application)
+![Đổi tên file tự động](/placeholder.svg?height=300&width=600&query=screenshot%20of%20file%20renaming%20application)
 
 ## Tính năng chính
 
@@ -27,8 +27,8 @@
 - `Ctrl + →` - Di chuyển đến file tiếp theo
 - `Ctrl + ←` - Di chuyển đến file trước đó
 - `Ctrl + S` - Đổi tên file hiện tại
-- `Ctrl + F` - Chọn mặt trước (F)
-- `Ctrl + B` - Chọn mặt sau (B)
+- `Ctrl + F` - Chọn mặt trước (Front)
+- `Ctrl + B` - Chọn mặt sau (Back)
 - `Ctrl + Enter` - Đổi tên file hiện tại
 
 ## Yêu cầu kỹ thuật
@@ -70,6 +70,10 @@ npm run dev
 
 - Do giới hạn bảo mật của trình duyệt, các file đã đổi tên cần được tải xuống thủ công
 - Ứng dụng chỉ xử lý các file ảnh .jpg và file nhãn .json
+
+## Bản quyền
+
+© 2023 Hà Trọng Nguyễn. Tất cả các quyền được bảo lưu.
 
 ## Giấy phép
 
