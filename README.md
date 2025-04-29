@@ -2,7 +2,7 @@
 
 Ứng dụng web giúp đổi tên file ảnh và file nhãn JSON theo định dạng tùy chỉnh một cách nhanh chóng và hiệu quả.
 
-![Đổi tên file tự động](./public/Demo_2.png)
+![Đổi tên file tự động](./public/Demo.png)
 
 ## Tính năng chính
 
