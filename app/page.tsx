@@ -22,7 +22,8 @@ import ImageMagnifier from "@/components/image-magnifier"
 
 export default function Home() {
   const [files, setFiles] = useState<{ images: File[]; labels: File[] }>({ images: [], labels: [] })
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [validPairs, setValidPairs] = useState<{ imageIndex: number; labelIndex: number }[]>([])
+  const [currentPairIndex, setCurrentPairIndex] = useState(0)
   const [currentImage, setCurrentImage] = useState<string | null>(null)
   const [currentJson, setCurrentJson] = useState<any | null>(null)
   const [productName, setProductName] = useState("")
@@ -65,16 +66,6 @@ export default function Home() {
     setProductName(name.toLowerCase())
   }
 
-  // Function to extract counter from filename
-  const extractCounterFromFilename = (filename: string): number => {
-    // Try to find a number at the end of the filename
-    const match = filename.match(/(\d+)(?:\.\w+)?$/)
-    if (match) {
-      return Number.parseInt(match[1], 10)
-    }
-    return 1 // Default to 1 if no number found
-  }
-
   // Keyboard shortcuts
   const handleKeyboardShortcuts = (e: KeyboardEvent) => {
     // Only process shortcuts with Ctrl key
@@ -87,13 +78,13 @@ export default function Home() {
         setSide("B")
       } else if (e.key === "ArrowRight") {
         e.preventDefault()
-        if (currentIndex < files.images.length - 1) {
-          setCurrentIndex(currentIndex + 1)
+        if (currentPairIndex < validPairs.length - 1) {
+          setCurrentPairIndex(currentPairIndex + 1)
         }
       } else if (e.key === "ArrowLeft") {
         e.preventDefault()
-        if (currentIndex > 0) {
-          setCurrentIndex(currentIndex - 1)
+        if (currentPairIndex > 0) {
+          setCurrentPairIndex(currentPairIndex - 1)
         }
       } else if ((e.key === "Enter" || e.key === "s") && !isProcessing && productName) {
         e.preventDefault()
@@ -105,30 +96,21 @@ export default function Home() {
   useEffect(() => {
     window.addEventListener("keydown", handleKeyboardShortcuts)
     return () => window.removeEventListener("keydown", handleKeyboardShortcuts)
-  }, [currentIndex, files.images.length, productName, isProcessing])
+  }, [currentPairIndex, validPairs.length, productName, isProcessing])
 
   // Load current file when index changes
   useEffect(() => {
-    if (files.images.length > 0 && currentIndex < files.images.length) {
+    if (validPairs.length > 0 && currentPairIndex < validPairs.length) {
       loadCurrentFile()
     }
-  }, [currentIndex, files.images])
+  }, [currentPairIndex, validPairs])
 
   // Focus on product name input when files are loaded
   useEffect(() => {
-    if (files.images.length > 0 && productNameRef.current) {
+    if (validPairs.length > 0 && productNameRef.current) {
       productNameRef.current.focus()
     }
-  }, [files.images.length])
-
-  // Add this useEffect to handle automatic counter increment
-  // useEffect(() => {
-  //   // If product name changed, reset counter only if product name actually changed
-  //   if (productName !== lastProductName && lastProductName !== "") {
-  //     setCount(1)
-  //   }
-  //   setLastProductName(productName)
-  // }, [productName])
+  }, [validPairs.length])
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {
@@ -160,30 +142,35 @@ export default function Home() {
     imageFiles.sort((a, b) => a.name.localeCompare(b.name))
     labelFiles.sort((a, b) => a.name.localeCompare(b.name))
 
+    // Find valid pairs (images with corresponding JSON files)
+    const pairs: { imageIndex: number; labelIndex: number }[] = []
+
+    imageFiles.forEach((imageFile, imageIndex) => {
+      const jsonName = imageFile.name.replace(".jpg", ".json")
+      const labelIndex = labelFiles.findIndex((labelFile) => labelFile.name === jsonName)
+
+      if (labelIndex !== -1) {
+        pairs.push({ imageIndex, labelIndex })
+      }
+    })
+
     // Assign sequential counters starting from 1
-    const counters = imageFiles.map((_, index) => index + 1)
+    const counters = pairs.map((_, index) => index + 1)
 
     setFiles({ images: imageFiles, labels: labelFiles })
+    setValidPairs(pairs)
     setFileCounters(counters)
-    setCurrentIndex(0)
-    setMessage(`Đã tải ${imageFiles.length} ảnh và ${labelFiles.length} file nhãn`)
+    setCurrentPairIndex(0)
+    setMessage(`Đã tải ${imageFiles.length} ảnh, ${labelFiles.length} file nhãn, ${pairs.length} cặp hợp lệ`)
   }
 
   const loadCurrentFile = async () => {
-    if (files.images.length === 0) return
+    if (validPairs.length === 0) return
 
     try {
-      const imageFile = files.images[currentIndex]
-      const imageName = imageFile.name
-
-      // Find matching JSON file
-      const jsonName = imageName.replace(".jpg", ".json")
-      const jsonFile = files.labels.find((file) => file.name === jsonName)
-
-      if (!jsonFile) {
-        setMessage(`Không tìm thấy file JSON tương ứng cho ${imageName}`)
-        return
-      }
+      const { imageIndex, labelIndex } = validPairs[currentPairIndex]
+      const imageFile = files.images[imageIndex]
+      const jsonFile = files.labels[labelIndex]
 
       // Load image
       setCurrentImage(URL.createObjectURL(imageFile))
@@ -193,15 +180,15 @@ export default function Home() {
       setCurrentJson(JSON.parse(jsonContent))
 
       // Use the fixed counter for this file
-      setCount(fileCounters[currentIndex] || currentIndex + 1)
+      setCount(fileCounters[currentPairIndex] || currentPairIndex + 1)
 
       // If useOriginalName is true, set the product name to the original filename (without extension)
       if (useOriginalName) {
-        const originalName = imageName.replace(".jpg", "")
+        const originalName = imageFile.name.replace(".jpg", "")
         setLowercaseProductName(originalName)
       } else {
         // Extract product name if it follows the format
-        const fileNameParts = imageName.replace(".jpg", "").split("_")
+        const fileNameParts = imageFile.name.replace(".jpg", "").split("_")
         if (fileNameParts.length === 3) {
           setLowercaseProductName(fileNameParts[0])
           setSide(fileNameParts[1])
@@ -217,7 +204,7 @@ export default function Home() {
   }
 
   const handleRenameCurrentFile = async () => {
-    if (files.images.length === 0 || !currentImage || !currentJson) {
+    if (validPairs.length === 0 || !currentImage || !currentJson) {
       setMessage("Không có file để đổi tên")
       return
     }
@@ -225,22 +212,15 @@ export default function Home() {
     setIsProcessing(true)
 
     try {
-      const imageFile = files.images[currentIndex]
+      const { imageIndex, labelIndex } = validPairs[currentPairIndex]
+      const imageFile = files.images[imageIndex]
+      const jsonFile = files.labels[labelIndex]
+
       const originalImageName = imageFile.name
-      const originalJsonName = originalImageName.replace(".jpg", ".json")
       const originalBaseName = originalImageName.replace(".jpg", "")
 
-      // Find matching JSON file
-      const jsonFile = files.labels.find((file) => file.name === originalJsonName)
-
-      if (!jsonFile) {
-        setMessage(`Không tìm thấy file JSON tương ứng cho ${originalImageName}`)
-        setIsProcessing(false)
-        return
-      }
-
       // Use the fixed counter for this file
-      const fileCounter = fileCounters[currentIndex] || currentIndex + 1
+      const fileCounter = fileCounters[currentPairIndex] || currentPairIndex + 1
 
       // Create new file names - use the fixed counter for this file
       const newBaseName = `${productName}_${side}_${fileCounter}`
@@ -328,8 +308,8 @@ export default function Home() {
       setMessage(`Đã đổi tên thành công: ${originalImageName} → ${newImageName}`)
 
       // Move to next file if available
-      if (currentIndex < files.images.length - 1) {
-        setCurrentIndex(currentIndex + 1)
+      if (currentPairIndex < validPairs.length - 1) {
+        setCurrentPairIndex(currentPairIndex + 1)
       }
     } catch (error) {
       console.error("Error renaming file:", error)
@@ -421,7 +401,8 @@ export default function Home() {
     if (!currentImage) return <div className="text-center p-4">Chưa có file nào được chọn</div>
 
     // Check if current file has been renamed
-    const currentFileName = files.images[currentIndex]?.name.replace(".jpg", "")
+    const { imageIndex } = validPairs[currentPairIndex]
+    const currentFileName = files.images[imageIndex]?.name.replace(".jpg", "")
     const hasBeenRenamed = allRenamedFiles.some((file) => file.originalName === currentFileName)
 
     // Get the renamed name if it exists
@@ -433,11 +414,11 @@ export default function Home() {
         <div className="space-y-1">
           <div className="flex justify-between text-xs">
             <span>
-              Tiến độ: {currentIndex + 1}/{files.images.length}
+              Tiến độ: {currentPairIndex + 1}/{validPairs.length}
             </span>
-            <span>{Math.round(((currentIndex + 1) / files.images.length) * 100)}%</span>
+            <span>{Math.round(((currentPairIndex + 1) / validPairs.length) * 100)}%</span>
           </div>
-          <Progress value={((currentIndex + 1) / files.images.length) * 100} className="h-1" />
+          <Progress value={((currentPairIndex + 1) / validPairs.length) * 100} className="h-1" />
         </div>
 
         {showDownloadHelp && (
@@ -468,7 +449,9 @@ export default function Home() {
               )}
             </div>
             <div className="mt-1 text-xs text-muted-foreground flex items-center">
-              <span className="truncate flex-1">File hiện tại: {files.images[currentIndex]?.name}</span>
+              <span className="truncate flex-1">
+                File hiện tại: {files.images[validPairs[currentPairIndex].imageIndex]?.name}
+              </span>
               {hasBeenRenamed && (
                 <Badge variant="outline" className="ml-1 text-xs h-5">
                   Đã đổi tên
@@ -714,16 +697,16 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-1 pt-1">
               <Button
                 variant="outline"
-                onClick={() => currentIndex > 0 && setCurrentIndex(currentIndex - 1)}
-                disabled={currentIndex === 0}
+                onClick={() => currentPairIndex > 0 && setCurrentPairIndex(currentPairIndex - 1)}
+                disabled={currentPairIndex === 0}
                 className="w-full h-8 text-xs"
               >
                 ← Trước
               </Button>
               <Button
                 variant="outline"
-                onClick={() => currentIndex < files.images.length - 1 && setCurrentIndex(currentIndex + 1)}
-                disabled={currentIndex === files.images.length - 1}
+                onClick={() => currentPairIndex < validPairs.length - 1 && setCurrentPairIndex(currentPairIndex + 1)}
+                disabled={currentPairIndex === validPairs.length - 1}
                 className="w-full h-8 text-xs"
               >
                 Tiếp theo →
@@ -748,7 +731,7 @@ export default function Home() {
     <main className="container mx-auto py-3 px-3 max-h-screen overflow-auto">
       <h1 className="text-xl font-bold mb-3">Đổi tên file tự động</h1>
 
-      {files.images.length === 0 ? (
+      {validPairs.length === 0 ? (
         <Card className="mb-3">
           <CardContent className="pt-4">
             <div className="text-center space-y-3">
